@@ -1,0 +1,29 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  tp-php:
+    build: ./php
+    container_name: tp-php-server
+    volumes:
+      - ./www:/var/www
+    restart: unless-stopped
+    networks:
+      - tp-net
+
+  tp-nginx:
+    image: nginx:alpine
+    container_name: tp-nginx-server
+    ports:
+      - "8088:80"
+    volumes:
+      - ./www:/var/www
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - tp-php
+    networks:
+      - tp-net
+
+networks:
+  tp-net:
+    driver: bridge
