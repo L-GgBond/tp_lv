@@ -24,6 +24,27 @@ services:
     networks:
       - tp-net
 
+  # RabbitMQ 服务
+  tp-rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: tp-rabbitmq
+    ports:
+      - "5672:5672"   # 消息队列端口
+      - "15672:15672" # 管理后台端口 (默认帐号密码: guest/guest)
+    networks:
+      - tp-net
+
+  # Elasticsearch 服务
+  tp-es:
+    image: elasticsearch:7.17.10 # 建议使用 7.x，资源占用相对 8.x 较小且兼容性好
+    container_name: tp-es
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # 限制内存，防止撑爆宿主机
+    ports:
+      - "9200:9200"
+    networks:
+      - tp-net
 networks:
   tp-net:
     driver: bridge

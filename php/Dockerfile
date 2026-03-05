@@ -13,8 +13,17 @@ RUN apk add --no-cache \
     zip \
     unzip \
     git \
+    && apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        linux-headers \
+    \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql gd bcmath zip opcache
+    && docker-php-ext-install pdo_mysql gd bcmath zip opcache sockets \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    \
+    && apk del .build-deps \
+    && rm -rf /tmp/pear
 
 # 复制 Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -22,4 +31,5 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # 设置 Composer 使用国内镜像
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
+# 设置容器启动后默认进入的工作目录
 WORKDIR /var/www
