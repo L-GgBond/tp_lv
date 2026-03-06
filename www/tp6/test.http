@@ -1,0 +1,6 @@
+### GET request to example server
+GET https://examples.http-client.intellij.net/get
+    ?generated-in=PhpStorm
+
+### GET user
+GET http://tp6.test:8088/user/register?username=admin&password=123456&phone=15888888888
